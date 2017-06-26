@@ -93,13 +93,14 @@ print(paste0("Finish prediction... accuracy2=", accuracy(label, pred2)))
 model <- mx.model.load("saved/chkpt", 1)
 
 #continue training with some new arguments
+tic <- proc.time()
 model <- mx.model.FeedForward.create(model$symbol, X=dtrain, eval.data=dtest,
-                                     ctx=mx.gpu(0), num.round=5,
+                                     ctx=mx.gpu(0), num.round=20,
                                      learning.rate=0.1, momentum=0.9,
                                      epoch.end.callback=mx.callback.save.checkpoint("saved/reload_chkpt"),
                                      batch.end.callback=mx.callback.log.train.metric(100),
                                      arg.params=model$arg.params, aux.params=model$aux.params)
-
+print(proc.time() - tic)
 # do prediction
 pred <- predict(model, dtest)
 label <- mx.io.extract(dtest, "label")
